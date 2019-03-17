@@ -1,0 +1,52 @@
+body{
+  font-family: sans-serif;
+}
+
+/* MIXIN */
+@mixin last-row-flexbox($num-columns, $width-items){
+  
+  //Vamos a calcular el espacio que queda entre los elementos para usarlo de márgen en los sueltos.
+  $filled-space: $width-items * $num-columns;
+  $margin: calc((100% - #{$filled-space}) / (#{$num-columns} - 1));
+
+  $num-cols-1 : $num-columns - 1;
+
+  //Establezco el ancho
+  width: $width-items;
+  //Damos el margen izquierdo a todos los elementos sueltos menos al primero.
+  &:nth-child(#{$num-columns}n+1):nth-last-child(-n+#{$num-cols-1}) ~ & {
+    margin-left: $margin;
+  }
+
+  //Mediante el bucle, generamos todas las posibles posiciones del last-child para darle margin-right auto.
+  @for $i from 1 through $num-columns - 2 { 
+    $index: $num-columns - $i;
+    &:nth-child(#{$num-columns}n+#{$index}):last-child{
+      margin-right: auto;
+    }
+  }
+
+  // NO ES NECESARIO PARA LA ALINEACIÓN, ES SIMPLEMENTE LA SELECCIÓN DE LOS ELEMENTOS HUÉRFANOS DE LA ÚLTIMA FILA
+  &:nth-child(#{$num-columns}n+1):nth-last-child(-n+#{$num-cols-1}),
+  &:nth-child(#{$num-columns}n+1):nth-last-child(-n+#{$num-cols-1}) ~ & {
+    background: deepskyblue;
+  }
+}
+
+$width: 19%;
+$cols: 5;
+
+.flexbox{
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.flex-item{
+  background-color: #CC0066;
+  padding: 2em 0;
+  border-radius: .5em;
+  text-align: center;
+  margin-bottom: 1em;
+  @include last-row-flexbox($cols, $width);
+}
